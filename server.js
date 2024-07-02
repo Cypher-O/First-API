@@ -19,6 +19,7 @@ app.get('/blog', (req, res) => {
     res.send('Hello Blog this is just a test')
 })
 
+//find products 
 app.get("/products",async(req, res) => {
     try {
         const products = await Product.find({});
@@ -29,6 +30,7 @@ app.get("/products",async(req, res) => {
     }
 })
 
+//find products by ID
 app.get("/products/:id", async(req, res) => {
     try {
         const {id} = req.params;
@@ -40,6 +42,7 @@ app.get("/products/:id", async(req, res) => {
     }
 })
 
+//Add products
 app.post("/products", async(req, res) => {
     try {
         const product = await Product.create(req.body)
@@ -61,6 +64,23 @@ app.put("/products/:id", async(req, res) => {
         }
         const updatedProduct = await Product.findById(id);
         res.status(200).json(updatedProduct)
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({message: error.message})
+    }
+})
+
+
+//delate a product
+app.delete('/products/:id', async(req, res) => {
+    try {
+        const {id} = req.params;
+        const product = await Product.findByIdAndDelete(id);
+        if(!product) {
+            return res.status(404).json({message: `Cannot find any product with ID ${id}`})
+        }
+        // res.status(200).json(product)
+        res.status(200).json({ message: 'Product deleted successfully' });
     } catch (error) {
         console.log(error.message)
         res.status(500).json({message: error.message})
