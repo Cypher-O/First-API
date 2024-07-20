@@ -24,6 +24,20 @@ const getProductById = async (req, res) => {
     }
 };
 
+//get a product by name
+const getProductByName = async (req, res) => {
+    try {
+        const { name } = req.params;
+        const product = await Product.findByName(name);
+        if (!product) {
+            return res.status(404).json({message: `Cannot find any product with name ${name}`});
+        }
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 // Add a product
 const createProduct = async (req, res) => {
     try {
@@ -65,6 +79,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
     getProducts,
     getProductById,
+    getProductByName,
     createProduct,
     updateProduct,
     deleteProduct,
