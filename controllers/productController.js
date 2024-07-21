@@ -29,7 +29,7 @@ const searchProductsByName = async (req, res) => {
     try {
         const { name } = req.query;
         const products = await Product.find({ name: new RegExp(name, 'i') }); // case insensitive search
-        if (!products) {
+        if (!name) {
             return res.status(404).json({ message: `Cannot find any products with name ${name}` });
         }
         res.status(200).json(products);
