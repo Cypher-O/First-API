@@ -24,19 +24,19 @@ const getProductById = async (req, res) => {
     }
 };
 
-//get a product by name
-const getProductByName = async (req, res) => {
+// search products by name
+const searchProductsByName = async (req, res) => {
     try {
-        const { name } = req.params;
-        const product = await Product.findByName(name);
-        if (!product) {
-            return res.status(404).json({message: `Cannot find any product with name ${name}`});
+        const { name } = req.query;
+        const products = await Product.find({ name: new RegExp(name, 'i') }); // case insensitive search
+        if (!products) {
+            return res.status(404).json({ message: `Cannot find any products with name ${name}` });
         }
-        res.status(200).json(product);
+        res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 // Add a product
 const createProduct = async (req, res) => {
@@ -79,7 +79,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
     getProducts,
     getProductById,
-    getProductByName,
+    searchProductsByName,
     createProduct,
     updateProduct,
     deleteProduct,
