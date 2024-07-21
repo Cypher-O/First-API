@@ -28,9 +28,12 @@ const getProductById = async (req, res) => {
 const searchProductsByName = async (req, res) => {
     try {
         const { name } = req.query;
-        const products = await Product.find({ name: new RegExp(name, 'i') }); // case insensitive search
         if (!name) {
-            return res.status(404).json({ message: `Cannot find any products with name ${name}` });
+            return res.status(400).json({ message: "Search term is required" });
+        }
+        const products = await Product.find({ name: new RegExp(name, 'i') }); // case insensitive search
+        if (products.length === 0) {
+            return res.status(404).json({ message: `No products found with name containing "${name}"` });
         }
         res.status(200).json(products);
     } catch (error) {
