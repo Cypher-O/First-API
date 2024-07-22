@@ -4,9 +4,11 @@ const mongoose = require('mongoose');
 const productRoutes = require('./routes/productRoutes');
 const indexRoutes = require('./routes/indexRoutes');
 const authRoutes = require('./routes/authRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const notFound = require('./middleware/notFound');
 var cors = require('cors');
+const loggingMiddleware = require('./middleware/loggingMiddleware');
 
 const app = express();
 
@@ -36,6 +38,7 @@ app.use(express.static('public'));
 app.use('/api', indexRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/category', categoryRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -45,6 +48,7 @@ app.get('/health', (req, res) => {
 // Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
+app.use(loggingMiddleware);
 
 // Database connection and server start
 mongoose.connect(process.env.MONGODB_URI)
