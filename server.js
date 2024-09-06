@@ -9,6 +9,9 @@ const errorHandler = require('./middleware/errorHandler');
 const notFound = require('./middleware/notFound');
 var cors = require('cors');
 const loggingMiddleware = require('./middleware/loggingMiddleware');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const path = require('path');
 
 const app = express();
 
@@ -33,6 +36,19 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static('public'));
 
+// Load the YAML file
+const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
+
+// Serve custom CSS
+app.use('/swagger-ui.css', express.static(path.join(__dirname, 'custom.css')));
+
+// Serve Swagger documentation with custom CSS
+const swaggerOptions = {
+  customCssUrl: '/swagger-ui.css',
+  customSiteTitle: "Authenticator API Docs"
+};
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
 
 // Routes
 app.use('/api', indexRoutes);
@@ -54,7 +70,7 @@ app.use(loggingMiddleware);
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log("Connected to MongoDB successfully");
-        app.listen(process.env.PORT || 3000, () => {
+        app.listen(process.env.PORT || 6000, () => {
             console.log(`Node API app is running on port ${process.env.PORT || 3000}`);
         });
     })
